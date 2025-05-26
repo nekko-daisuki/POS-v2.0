@@ -1,0 +1,676 @@
+body {
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column; /* ヘッダーが上に来るように */
+    justify-content: flex-start; /* コンテンツが上から始まるように */
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f2f5;
+    margin: 0;
+    overflow-x: hidden; /* 横スクロールを防ぐ */
+}
+
+/* ヘッダー */
+.app-header {
+    width: 100%;
+    background-color: #007bff;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: fixed; /* ヘッダーを固定 */
+    top: 0;
+    left: 0;
+    z-index: 1001; /* 他の要素より手前に */
+}
+
+.header-title {
+    margin: 0 auto; /* 中央寄せ */
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+/* ハンバーガーメニューボタン */
+.hamburger-menu {
+    width: 30px;
+    height: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    z-index: 1002; /* サイドメニューより手前に */
+}
+
+.hamburger-menu .line {
+    width: 100%;
+    height: 3px;
+    background-color: white;
+    transition: all 0.3s ease;
+}
+
+/* ハンバーガーメニューのアニメーション */
+.hamburger-menu.open .line:nth-child(1) {
+    transform: translateY(11px) rotate(45deg);
+}
+
+.hamburger-menu.open .line:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-menu.open .line:nth-child(3) {
+    transform: translateY(-11px) rotate(-45deg);
+}
+
+/* サイドメニュー */
+.side-menu {
+    position: fixed;
+    top: 0;
+    left: -250px; /* 初期状態は隠す */
+    width: 250px;
+    height: 100%;
+    background-color: #333;
+    padding-top: 80px; /* ヘッダーの高さ分開ける */
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+    transition: left 0.3s ease;
+    z-index: 1000;
+}
+
+.side-menu.open {
+    left: 0; /* 開いた状態 */
+}
+
+.side-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.side-menu ul li {
+    border-bottom: 1px solid #444;
+}
+
+.side-menu ul li:last-child {
+    border-bottom: none;
+}
+
+.side-menu a {
+    display: block;
+    padding: 15px 20px;
+    color: white;
+    text-decoration: none;
+    font-size: 1.2em;
+    transition: background-color 0.2s;
+}
+
+.side-menu a:hover {
+    background-color: #555;
+}
+
+.side-menu a.active {
+    background-color: #0056b3; /* 現在のページを示す */
+    font-weight: bold;
+}
+
+/* オーバーレイ */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none; /* 初期状態は非表示 */
+}
+
+.overlay.active {
+    display: block; /* アクティブ時に表示 */
+}
+
+/* POSコンテナの調整 (ヘッダーと重ならないように) */
+.pos-container {
+    display: flex;
+    width: 95%; /* 画面幅に応じて少し広めに */
+    max-width: 1280px; /* 最大幅を設定 */
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    min-height: calc(100vh - 100px); /* ヘッダーの高さ分を引く */
+    margin-top: 80px; /* ヘッダーの高さ分下にずらす */
+    margin-bottom: 20px; /* フッターなどがある場合に備えて下にも余白 */
+}
+
+/* ... (既存のPOSコンテナ、注文パネル、メニューパネルのスタイル) ... */
+
+
+/* 注文リストパネル */
+.order-panel {
+    width: 35%;
+    min-width: 300px;
+    padding: 20px;
+    border-right: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+}
+
+.order-title {
+    font-size: 1.8em;
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #333;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+.order-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px dashed #eee;
+}
+
+.item-name {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #555;
+    flex-grow: 1;
+}
+
+.item-quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+}
+
+.quantity-button {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.quantity-button:hover {
+    background-color: #e0e0e0;
+}
+
+.quantity-display {
+    width: 30px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #333;
+}
+
+.order-summary {
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: left;
+    padding-top: 15px;
+    border-top: 2px solid #eee;
+    margin-top: auto;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.btn {
+    flex: 1;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+.btn-cancel {
+    background-color: #ff6b6b;
+    color: white;
+    margin-right: 10px;
+}
+
+.btn-cancel:hover {
+    background-color: #e05c5c;
+}
+
+.btn-pay {
+    background-color: #4CAF50;
+    color: white;
+    margin-left: 10px;
+}
+
+.btn-pay:hover {
+    background-color: #45a049;
+}
+
+.btn-history {
+    background-color: #007bff; /* Blue */
+    color: white;
+    margin-left: 10px;
+    flex: 0.5; /* 他のボタンより少し小さめ */
+}
+
+.btn-history:hover {
+    background-color: #0056b3;
+}
+
+/* 商品選択パネル */
+.menu-panel {
+    width: 65%;
+    min-width: 500px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.product-group {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+
+.product-category-button,
+.product-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.95em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    aspect-ratio: 1 / 1;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 5px;
+    min-width: 60px;
+}
+
+.product-category-button {
+    color: white;
+    box-shadow: none;
+    border: none;
+    flex-shrink: 0;
+}
+
+/* カテゴリボタンの色 */
+.product-category-button.red {
+    background-color: #ff6b6b;
+}
+.product-category-button.blue {
+    background-color: #4a90e2;
+}
+.product-category-button.orange {
+    background-color: #f5a623;
+}
+.product-category-button.green {
+    background-color: #7ed321;
+}
+
+.product-button:hover {
+    background-color: #eef;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 空のボタンのスタイル */
+.product-button.empty {
+    border: none;
+    box-shadow: none;
+    cursor: default;
+    background-color: transparent;
+}
+.product-button.empty.transparent {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+}
+.product-button.empty:hover {
+    background-color: transparent;
+    box-shadow: none;
+}
+
+/* 支払い画面 */
+.payment-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.payment-screen.hidden {
+    display: none;
+}
+
+.payment-container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+}
+
+.payment-total {
+    font-size: 2em;
+    margin-bottom: 25px;
+    color: #333;
+}
+
+.payment-details {
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #555;
+}
+
+.number-pad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.num-key {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px 0;
+    font-size: 1.8em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.num-key:hover {
+    background-color: #e0e0e0;
+}
+
+.num-key:active {
+    transform: translateY(1px);
+}
+
+.payment-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+.payment-btn {
+    flex: 1;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.payment-btn:active {
+    transform: translateY(1px);
+}
+
+.btn-cancel-payment {
+    background-color: #ff6b6b;
+    color: white;
+    margin-right: 10px;
+}
+
+.btn-cancel-payment:hover {
+    background-color: #e05c5c;
+}
+
+.btn-complete {
+    background-color: #4CAF50;
+    color: white;
+    margin-left: 10px;
+}
+
+.btn-complete:hover {
+    background-color: #45a049;
+}
+
+
+/* 履歴ページのスタイル */
+.history-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 800px;
+    margin-top: 80px; /* ヘッダーの高さ分ずらす */
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 100px); /* ヘッダーの高さ分を引く */
+}
+
+.history-title {
+    font-size: 2em;
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #333;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    text-align: center;
+}
+
+.order-history-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    border: 1px solid #eee;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.history-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px dashed #eee;
+}
+
+.history-date {
+    font-size: 0.9em;
+    color: #777;
+}
+
+.history-total {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+}
+
+.history-items-detail {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.history-items-detail li {
+    font-size: 0.95em;
+    color: #555;
+    padding: 3px 0;
+}
+
+.history-actions {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.btn-back {
+    background-color: #6c757d; /* Gray */
+    color: white;
+    padding: 10px 20px;
+    font-size: 1.1em;
+}
+
+.btn-back:hover {
+    background-color: #5a6268;
+}
+
+
+/* レスポンシブ対応 */
+@media (max-width: 800px) {
+    .pos-container {
+        flex-direction: column;
+        width: 100%;
+        min-height: calc(100vh - 80px); /* ヘッダーの高さ分を考慮 */
+        height: auto; /* コンテンツに合わせて高さを調整 */
+        border-radius: 0;
+        box-shadow: none;
+        margin-top: 60px; /* ヘッダーの高さ分調整 */
+    }
+
+    .order-panel,
+    .menu-panel {
+        width: 100%;
+        min-width: unset;
+        padding: 15px;
+        border-right: none;
+        border-bottom: 1px solid #eee;
+    }
+
+    .order-panel {
+        height: auto; /* コンテンツに合わせて高さを自動調整 */
+        flex-shrink: 0;
+    }
+    .order-list {
+        height: auto; /* コンテンツに合わせて高さを自動調整 */
+        max-height: 200px; /* 最大高さを設定してスクロール可能に */
+    }
+
+    .menu-panel {
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+
+    .product-group {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .product-category-button {
+        grid-column: span 2;
+        font-size: 1.1em;
+    }
+    .product-button.empty {
+        display: none;
+    }
+
+    .action-buttons .btn {
+        font-size: 1em;
+        padding: 12px 15px;
+    }
+    .btn-history {
+        margin-left: 5px;
+        flex: 1;
+    }
+    .btn-pay {
+        margin-right: 5px;
+        margin-left: 5px;
+    }
+    .btn-cancel {
+        margin-right: 5px;
+        margin-left: 5px;
+    }
+
+    /* 履歴コンテナの調整 */
+    .history-container {
+        width: 100%;
+        min-height: calc(100vh - 80px); /* ヘッダーの高さ分を考慮 */
+        height: auto;
+        margin-top: 60px; /* ヘッダーの高さ分調整 */
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    /* ヘッダーのレスポンシブ調整 */
+    .app-header {
+        padding: 10px 15px; /* パディングを調整 */
+    }
+    .header-title {
+        font-size: 1.2em; /* フォントサイズを小さく */
+    }
+    .hamburger-menu {
+        width: 25px;
+        height: 20px;
+    }
+    .hamburger-menu .line {
+        height: 2px;
+    }
+    .hamburger-menu.open .line:nth-child(1) {
+        transform: translateY(9px) rotate(45deg);
+    }
+    .hamburger-menu.open .line:nth-child(3) {
+        transform: translateY(-9px) rotate(-45deg);
+    }
+    .side-menu {
+        padding-top: 60px; /* ヘッダーの高さ分を調整 */
+    }
+}
+
+@media (max-width: 480px) {
+    .product-group {
+        grid-template-columns: 1fr;
+    }
+    .product-category-button {
+        grid-column: span 1;
+        font-size: 1.1em;
+    }
+}
